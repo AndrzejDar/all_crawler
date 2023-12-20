@@ -215,7 +215,7 @@ const scrapeAllAllegroCategories = async () => {
     const category = categoriesArray[i];
     const res = await scrapeAllegroCategoryAll(category.allegro_cat_id);
     console.log(
-      `!!! scrpaped ${res.savedProductListings.length} products for categorry ${category.allegro_cat_id}`
+      `!!! scrpaped ${res?.savedProductListings?.length} products for categorry ${category.allegro_cat_id}`
     );
   }
   const finishTime = new Date();
