@@ -10,7 +10,8 @@
     "client": "npm start --prefix client",
     "clientInstall": "npm i --prefix client",
     "clientBuild": "react-scripts build --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "bash postbuild.bash"
   },
   "proxy": "http://localhost:5000/",
   "keywords": [],
