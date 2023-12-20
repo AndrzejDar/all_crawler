@@ -1,0 +1,50 @@
+{
+  "1": {
+    "id": 1,
+    "product_name": "iphone 5s",
+    "allegro_cat_name": "apple-iphone-5s",
+    "allegro_cat_id": "145923",
+    "best_price": {
+      "date": "10-12-1234",
+      "lowest_price": 10,
+      "median_price": 12,
+      "items_count": 123,
+      "allegro_prod_id": 123454
+    },
+    "best_price_history": [
+      {
+        "date": "10-12-1234",
+        "lowest_price": 11,
+        "median_price": 12,
+        "items_count": 123,
+        "allegro_prod_id": 1345667
+      },
+      {
+        "date": "09-12-1234",
+        "lowest_price": 11,
+        "median_price": 12,
+        "items_count": 123,
+        "allegro_prod_id": 1345667
+      }
+    ],
+    "best_price_w_shipping": {},
+    "best_price_w_shipping_history": {},
+    "variants": [
+      {
+        "id": 1,
+        "param_names": ["srebrny", "32 GB"],
+        "params": ["kolor=srebrny", "wbudowana-pamiec=32 GB"],
+        "lowest_price": 12,
+        "allegro_id": 1234
+      },
+      {
+        "id": 2,
+        "param_names": ["32 GB"],
+        "params": ["wbudowana-pamiec=32 GB"],
+        "lowestPrice": 12,
+        "allegroId": 12341513451
+      }
+    ]
+  },
+  "2": {}
+}
