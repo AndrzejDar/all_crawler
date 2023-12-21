@@ -25,22 +25,23 @@ const browserOptions2 = {
 
 const browserOptions = {
   executablePath: executablePath(),
-  // headless: true,
-  headless: "new", // causes some errors
+  headless: true,
+  // headless: "new", // causes some errors
+  protocolTimeout: 10000,
   devtools: false,
   ignoreHTTPSErrors: true,
   // userDataDir: "./tmp", //to persist data beetwen runs
   slowMo: 0,
   args: [
     "--disable-gpu",
-    "--no-sandbox",
+    "--no-sandbox", //heroku
     "--no-zygote",
     "--disable-setuid-sandbox",
     "--disable-accelerated-2d-canvas",
     "--disable-dev-shm-usage",
     "--proxy-server='direct://'",
     "--proxy-bypass-list=*",
-    "--disable-setuid-sandbox",
+    "--disable-setuid-sandbox", //heroku
     "--disable-infobars",
     "--window-position=0,0",
     "--ignore-certifcate-errors",
@@ -104,6 +105,7 @@ export class PuppeteerManager {
 
   async runBrowser() {
     console.log("!!!initializing new browser");
+    await delay(4000);
     puppeteer.use(StealthPlugin());
     const bw = await puppeteer.launch(browserOptions);
 
@@ -133,7 +135,7 @@ export class PuppeteerManager {
       waitUntil: "networkidle2",
       timeout: 0,
     });
-    await page.screenshot({ path: "image3.png" });
+    // await page.screenshot({ path: "image3.png" });
     return page;
   }
 
@@ -150,7 +152,7 @@ export class PuppeteerManager {
     await page.setUserAgent(this.userAgent.toString());
     await page.setJavaScriptEnabled(true);
     await page.setDefaultNavigationTimeout(0);
-    await page.setGeolocation({ latitude: 52.21859, longitude: 20.9711 });
+    // await page.setGeolocation({ latitude: 52.21859, longitude: 20.9711 });
 
     await page.setExtraHTTPHeaders({
       "upgrade-insecure-requests": "1",
