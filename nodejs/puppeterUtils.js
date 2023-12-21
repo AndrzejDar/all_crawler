@@ -135,7 +135,11 @@ export class PuppeteerManager {
       waitUntil: "networkidle2",
       timeout: 0,
     });
-    page.waitForNavigation();
+    await page.waitForNavigation();
+    const mainFrame = page.mainFrame();
+    if (!mainFrame) {
+      throw new Error("navigation detached");
+    }
     // await page.screenshot({ path: "image3.png" });
     return page;
   }
