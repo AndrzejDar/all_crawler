@@ -27,7 +27,7 @@ const browserOptions = {
   executablePath: executablePath(),
   headless: true,
   // headless: "new", // causes some errors
-  protocolTimeout: 10000,
+  protocolTimeout: 30000,
   devtools: false,
   ignoreHTTPSErrors: true,
   // userDataDir: "./tmp", //to persist data beetwen runs
@@ -135,6 +135,7 @@ export class PuppeteerManager {
       waitUntil: "networkidle2",
       timeout: 0,
     });
+    page.waitForNavigation();
     // await page.screenshot({ path: "image3.png" });
     return page;
   }
