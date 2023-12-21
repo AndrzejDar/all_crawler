@@ -11,6 +11,8 @@ const [hour, min] = randomScheduleMorningTime();
 // console.log({ hour }, { min });
 const scheduleOperations = () => {
   schedule.scheduleJob(`${min} ${hour} * * *`, scrapeAllAllegroCategories);
+  schedule.scheduleJob(`${min} ${hour + 1} * * *`, scrapeAllAllegroCategories);
+  schedule.scheduleJob(`${min} ${hour + 2} * * *`, scrapeAllAllegroCategories);
 };
 
 export default scheduleOperations;

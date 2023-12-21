@@ -78,9 +78,23 @@ const AddProductListings = async (data) => {
 
 const GetAllAllegroCategoriesToScrape = async () => {
   console.log(`[-] Getting all allegor categories to scrape`);
-  const query = `SELECT allegro_cat_id FROM \`productCategories\` WHERE auto_scrape=1`;
-  const [rows] = await promisePool.query(query);
+  const upToDate = new Date().toISOString().slice(0, 10);
+  console.log(upToDate);
+  const query = `
+  SELECT allegro_cat_id, id 
+  FROM \`productCategories\` 
+  WHERE auto_scrape=1 AND last_scrape != ?;`;
+  const [rows] = await promisePool.query(query, [upToDate]);
   return rows;
+};
+
+const MarkCategoryScrapeDate = async (id) => {
+  console.log(`[-] Marking Categor scrape date`);
+  const query = `UPDATE \`productCategories\` SET last_scrape= '${new Date()
+    .toISOString()
+    .slice(0, 10)}' WHERE id=${id}`;
+  await promisePool.query(query);
+  return;
 };
 
 export {
@@ -92,4 +106,5 @@ export {
   SelectCategoryIdByAllegroId,
   AddProductListings,
   GetAllAllegroCategoriesToScrape,
+  MarkCategoryScrapeDate,
 };

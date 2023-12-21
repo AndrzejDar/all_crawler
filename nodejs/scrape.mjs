@@ -2,6 +2,7 @@ import {
   AddProductListings,
   GetAllAllegroCategoriesToScrape,
   GetCategoryByAllegroId,
+  MarkCategoryScrapeDate,
   SelectCategoryIdByAllegroId,
 } from "../Repositories/MySQLCategoryRepository.js";
 import {
@@ -133,11 +134,16 @@ const scrapeAllegroCategoryAll = async (allegro_cat_id, usedProduct = true) => {
 };
 
 const scrapePage = async (catId, query, pm) => {
-  // try {
-  const page = await pm.createPageFromUrl(
-    // "https://wp.pl"
-    `https://allegro.pl/kategoria/${catId}` + query
-  );
+  let page = null;
+  try {
+    page = await pm.createPageFromUrl(
+      // "https://wp.pl"
+      `https://allegro.pl/kategoria/${catId}` + query
+    );
+  } catch (e) {
+    throw new Error("failed createing page from URL");
+    return;
+  }
   if (page === null) {
     console.log("page is empty in scrapePage");
     return;
@@ -211,12 +217,16 @@ const scrapeAllAllegroCategories = async () => {
   );
 
   const categoriesArray = await GetAllAllegroCategoriesToScrape();
+
   for (let i = 0; i < categoriesArray.length; i++) {
     const category = categoriesArray[i];
     const res = await scrapeAllegroCategoryAll(category.allegro_cat_id);
     console.log(
       `!!! scrpaped ${res?.savedProductListings?.length} products for categorry ${category.allegro_cat_id}`
     );
+    if (res?.savedProductListings && res?.savedProductListings?.length > 0) {
+      await MarkCategoryScrapeDate(category.id);
+    }
   }
   const finishTime = new Date();
   console.log(

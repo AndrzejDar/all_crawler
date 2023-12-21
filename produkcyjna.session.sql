@@ -33,3 +33,10 @@ CREATE TABLE offers(
 
         -- @block
         DROP TABLE ProductCategories
+
+       -- @block
+ALTER TABLE `productCategories`
+ADD COLUMN `last_scrape` VARCHAR(255);
+       -- @block
+ALTER TABLE `productCategories`
+DROP COLUMN `last_scrape`;

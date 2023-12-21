@@ -82,7 +82,7 @@ export class PuppeteerManager {
     while (page === null && this.retries < 10) {
       try {
         page = await this.createPage(this.browser, url, this.userAgent);
-        if (this.error) throw new Error(); //need beter solution to catch errors from interceptor from page object
+
         return page;
       } catch (error) {
         console.log(
@@ -100,6 +100,7 @@ export class PuppeteerManager {
       }
     }
     console.log("!!!failed all retries or smth???");
+    console.log("page:", page);
     return null;
   }
 
@@ -135,10 +136,11 @@ export class PuppeteerManager {
       waitUntil: "networkidle2",
       timeout: 0,
     });
-    await page.waitForNavigation();
+    if (this.error) throw new Error("interceptors error"); //need beter solution to catch errors from interceptor from page object
+    // await page.waitForNavigation();
     const mainFrame = page.mainFrame();
     if (!mainFrame) {
-      throw new Error("navigation detached");
+      throw new Error("! navigation detached");
     }
     // await page.screenshot({ path: "image3.png" });
     return page;

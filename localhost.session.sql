@@ -72,4 +72,4 @@ ALTER TABLE `Offers`
 MODIFY COLUMN `allegro_prod_id` BIGINT;
 -- @block
 ALTER TABLE `ProductCategories`
-ADD COLUMN `auto_scrape` BOOLEAN;
+ADD COLUMN `last_scrape`;
