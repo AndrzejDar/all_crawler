@@ -110,6 +110,7 @@ export class PuppeteerManager {
         const bw = await puppeteer.launch(browserOptions);
         return bw;
       } catch (e) {
+        await delay(30000);
         console.log("!!! Failed lunching browser", e, "try nr", i);
       }
     }
@@ -167,7 +168,7 @@ export class PuppeteerManager {
       isLandscape: false,
       isMobile: false,
     });
-    console.log(this.userAgent.toString());
+    // console.log(this.userAgent.toString());
     await page.setUserAgent(this.userAgent.toString());
     await page.setJavaScriptEnabled(true);
     await page.setDefaultNavigationTimeout(0);
