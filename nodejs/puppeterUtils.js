@@ -104,11 +104,23 @@ export class PuppeteerManager {
     return null;
   }
 
+  async retryLaunchBrowser(puppeter, retries) {
+    for (let i = 0; i < retries; i++) {
+      try {
+        const bw = await puppeteer.launch(browserOptions);
+        return bw;
+      } catch (e) {
+        console.log("!!! Failed lunching browser", e, "try nr", i);
+      }
+    }
+    return null;
+  }
+
   async runBrowser() {
     console.log("!!!initializing new browser");
     await delay(4000);
     puppeteer.use(StealthPlugin());
-    const bw = await puppeteer.launch(browserOptions);
+    const bw = await this.retryLaunchBrowser(puppeteer, 10);
 
     bw.on("disconnected", async () => {
       if (this.isReleased) return;
