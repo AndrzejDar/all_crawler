@@ -107,8 +107,9 @@ export class PuppeteerManager {
 
   async retryLaunchBrowser(puppeter, retries) {
     for (let i = 0; i < retries; i++) {
+      let bw = null;
       try {
-        const bw = await puppeteer.launch(browserOptions);
+        bw = await puppeteer.launch(browserOptions);
         return bw;
       } catch (e) {
         await delay(30000);
