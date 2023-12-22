@@ -27,7 +27,7 @@ const browserOptions = {
   executablePath: executablePath(),
   headless: true,
   // headless: "new", // causes some errors
-  protocolTimeout: 30000,
+  protocolTimeout: 60000,
   devtools: false,
   ignoreHTTPSErrors: true,
   // userDataDir: "./tmp", //to persist data beetwen runs
@@ -173,74 +173,78 @@ export class PuppeteerManager {
   }
 
   async pageInterceptionSetup(page) {
-    await page.on("request", async (req) => {
-      if (
-        req.resourceType() == "stylesheet" ||
-        req.resourceType() == "font" ||
-        req.resourceType() == "image"
-      ) {
-        if (!req.isInterceptResolutionHandled()) {
-          await req.abort();
-        }
-        return;
-      }
-      try {
-        if (req.url().includes("captcha-delivery.com")) {
+    try {
+      await page.on("request", async (req) => {
+        if (
+          req.resourceType() == "stylesheet" ||
+          req.resourceType() == "font" ||
+          req.resourceType() == "image"
+        ) {
           if (!req.isInterceptResolutionHandled()) {
-            // console.log("aborting");
             await req.abort();
-            throw new Error("-----------Blocked by Datadome---------------"); //Reject when event hapens
           }
           return;
         }
-        if (!req.isInterceptResolutionHandled()) {
-          await req.continue();
+        try {
+          if (req.url().includes("captcha-delivery.com")) {
+            if (!req.isInterceptResolutionHandled()) {
+              // console.log("aborting");
+              await req.abort();
+              throw new Error("-----------Blocked by Datadome---------------"); //Reject when event hapens
+            }
+            return;
+          }
+          if (!req.isInterceptResolutionHandled()) {
+            await req.continue();
+          }
+          return;
+        } catch (e) {
+          if (e.message) console.log(e.message);
+          else console.log(e);
+          this.error = true;
         }
-        return;
-      } catch (e) {
-        if (e.message) console.log(e.message);
-        else console.log(e);
-        this.error = true;
-      }
-    });
-
-    await page.evaluateOnNewDocument(() => {
-      // Pass webdriver check
-      Object.defineProperty(navigator, "webdriver", {
-        get: () => false,
       });
-    });
 
-    await page.evaluateOnNewDocument(() => {
-      // Pass chrome check
-      window.chrome = {
-        runtime: {},
-        // etc.
-      };
-    });
-
-    await page.evaluateOnNewDocument(() => {
-      //Pass notifications check
-      const originalQuery = window.navigator.permissions.query;
-      return (window.navigator.permissions.query = (parameters) =>
-        parameters.name === "notifications"
-          ? Promise.resolve({ state: Notification.permission })
-          : originalQuery(parameters));
-    });
-
-    await page.evaluateOnNewDocument(() => {
-      // Overwrite the `plugins` property to use a custom getter.
-      Object.defineProperty(navigator, "plugins", {
-        get: () => [1, 2, 3, 4, 5],
+      await page.evaluateOnNewDocument(() => {
+        // Pass webdriver check
+        Object.defineProperty(navigator, "webdriver", {
+          get: () => false,
+        });
       });
-    });
 
-    await page.evaluateOnNewDocument(() => {
-      // Overwrite the `languages` property to use a custom getter.
-      Object.defineProperty(navigator, "languages", {
-        get: () => ["en-US", "en"],
+      await page.evaluateOnNewDocument(() => {
+        // Pass chrome check
+        window.chrome = {
+          runtime: {},
+          // etc.
+        };
       });
-    });
+
+      await page.evaluateOnNewDocument(() => {
+        //Pass notifications check
+        const originalQuery = window.navigator.permissions.query;
+        return (window.navigator.permissions.query = (parameters) =>
+          parameters.name === "notifications"
+            ? Promise.resolve({ state: Notification.permission })
+            : originalQuery(parameters));
+      });
+
+      await page.evaluateOnNewDocument(() => {
+        // Overwrite the `plugins` property to use a custom getter.
+        Object.defineProperty(navigator, "plugins", {
+          get: () => [1, 2, 3, 4, 5],
+        });
+      });
+
+      await page.evaluateOnNewDocument(() => {
+        // Overwrite the `languages` property to use a custom getter.
+        Object.defineProperty(navigator, "languages", {
+          get: () => ["en-US", "en"],
+        });
+      });
+    } catch (e) {
+      console.log("! error seting up interceptors");
+    }
   }
 }
 
