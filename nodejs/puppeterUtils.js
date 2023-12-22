@@ -25,9 +25,10 @@ const browserOptions2 = {
 
 const browserOptions = {
   executablePath: executablePath(),
-  headless: true,
-  // headless: "new", // causes some errors
+  // headless: true,
+  headless: "new", // causes some errors
   protocolTimeout: 60000,
+  timeout: 30000,
   devtools: false,
   ignoreHTTPSErrors: true,
   // userDataDir: "./tmp", //to persist data beetwen runs
@@ -111,7 +112,9 @@ export class PuppeteerManager {
         return bw;
       } catch (e) {
         await delay(30000);
-        console.log("!!! Failed lunching browser", e, "try nr", i);
+        console.log("!!! Failed lunching browser", "try nr", i, e);
+      } finally {
+        if (bw) bw.close();
       }
     }
     return null;
