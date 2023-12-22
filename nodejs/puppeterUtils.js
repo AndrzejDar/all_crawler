@@ -112,10 +112,11 @@ export class PuppeteerManager {
         bw = await puppeteer.launch(browserOptions);
         return bw;
       } catch (e) {
-        await delay(30000);
         console.log("!!! Failed lunching browser", "try nr", i, e);
       } finally {
-        if (bw) bw.close();
+        console.log("! cloasing browser gracefully");
+        if (bw) await bw.close();
+        await delay(30000);
       }
     }
     return null;
