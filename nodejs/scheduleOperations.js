@@ -13,6 +13,10 @@ const scheduleOperations = () => {
   schedule.scheduleJob(`${min} ${hour} * * *`, scrapeAllAllegroCategories);
   schedule.scheduleJob(`${min} ${hour + 1} * * *`, scrapeAllAllegroCategories);
   schedule.scheduleJob(`${min} ${hour + 2} * * *`, scrapeAllAllegroCategories);
+  schedule.scheduleJob(`${min} ${hour + 3} * * *`, scrapeAllAllegroCategories);
+  schedule.scheduleJob(`${min} ${hour + 4} * * *`, scrapeAllAllegroCategories);
+  schedule.scheduleJob(`${min} ${hour + 5} * * *`, scrapeAllAllegroCategories);
+  schedule.scheduleJob(`${min} ${hour + 6} * * *`, scrapeAllAllegroCategories);
 };
 
 export default scheduleOperations;

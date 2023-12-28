@@ -221,11 +221,13 @@ const scrapeAllAllegroCategories = async () => {
   for (let i = 0; i < categoriesArray.length; i++) {
     const category = categoriesArray[i];
     const res = await scrapeAllegroCategoryAll(category.allegro_cat_id);
-    console.log(
-      `!!! scrpaped ${res?.savedProductListings?.length} products for categorry ${category.allegro_cat_id}`
-    );
     if (res?.savedProductListings && res?.savedProductListings?.length > 0) {
+      console.log(
+        `!!! scraped ${res?.savedProductListings?.length} products for categorry ${category.allegro_cat_id}`
+      );
       await MarkCategoryScrapeDate(category.id);
+    } else {
+      console.log(`!!! failed scraping category ID: ${category.id} `);
     }
   }
   const finishTime = new Date();

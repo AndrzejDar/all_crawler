@@ -25,8 +25,8 @@ const browserOptions2 = {
 
 const browserOptions = {
   executablePath: executablePath(),
-  // headless: true,
-  headless: "new", // causes some errors
+  headless: true,
+  // headless: "new", // causes some errors
   protocolTimeout: 60000,
   timeout: 30000,
   devtools: false,
@@ -80,7 +80,7 @@ export class PuppeteerManager {
     await delay(Math.random() * 2000);
     if (!this.browser) this.browser = await this.runBrowser();
     let page = null;
-    while (page === null && this.retries < 10) {
+    while (page === null && this.retries < 20) {
       try {
         page = await this.createPage(this.browser, url, this.userAgent);
 
@@ -113,7 +113,7 @@ export class PuppeteerManager {
         return bw;
       } catch (e) {
         console.log("!!! Failed lunching browser", "try nr", i, e);
-        console.log("! cloasing browser gracefully");
+        console.log("!!! closing browser gracefully");
         if (bw) await bw.close();
         await delay(30000);
       } finally {
