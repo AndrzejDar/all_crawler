@@ -85,7 +85,9 @@ const scrapeAllegroCategoryAll = async (allegro_cat_id, usedProduct = true) => {
         parseInt(p.price.normal.amount),
         parseInt(p.id),
         usedProduct ? "używane" : "nowe", //
-        cat_id
+        cat_id,
+        p.url,
+        p.vendor === "allegro_lokalnie" ? true : false
       ).toArray();
       productListingsArray.push(productListing);
     });
@@ -119,7 +121,9 @@ const scrapeAllegroCategoryAll = async (allegro_cat_id, usedProduct = true) => {
           parseInt(p.price.normal.amount),
           parseInt(p.id),
           usedProduct ? "używane" : "nowe", //
-          cat_id
+          cat_id,
+          p.url,
+          p.vendor === "allegro_lokalnie" ? true : false
         ).toArray();
         productListingsArray.push(productListing);
       });

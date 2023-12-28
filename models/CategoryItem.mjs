@@ -13,13 +13,23 @@ class Price {
 }
 
 class ProductListing {
-  constructor(title, price, allegro_prod_id, state, cat_id) {
+  constructor(
+    title,
+    price,
+    allegro_prod_id,
+    state,
+    cat_id,
+    allegro_direct_link,
+    allegro_lokalnie
+  ) {
     this.created_at = new Date();
     this.allegro_prod_id = allegro_prod_id;
     this.price = price;
     this.title = title;
     this.cat_id = cat_id; //foreign key - CategorItem.allegro_cat_id id
     this.state = state; //'Nowy' | 'Używany'
+    this.allegro_direct_link = allegro_direct_link;
+    this.allegro_lokalnie = allegro_lokalnie; //boole
   }
 
   toArray() {
@@ -30,6 +40,8 @@ class ProductListing {
       this.allegro_prod_id,
       this.state,
       this.cat_id,
+      this.allegro_direct_link,
+      this.allegro_lokalnie,
     ];
   }
 }

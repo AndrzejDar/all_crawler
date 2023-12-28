@@ -65,7 +65,7 @@ const SelectCategoryIdByAllegroId = async (id) => {
 
 const AddProductListings = async (data) => {
   console.log(`[-] Addig multiple product listings`);
-  const insertQuery = `INSERT INTO \`offers\` (created_at, title, price ,allegro_prod_id, state, cat_id) VALUES ?`;
+  const insertQuery = `INSERT INTO \`offers\` (created_at, title, price ,allegro_prod_id, state, cat_id,allegro_direct_link,allegro_lokalnie) VALUES ?`;
   const res = await promisePool.query(insertQuery, [data]);
 
   // this.created_at = new Date();
