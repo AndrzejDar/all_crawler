@@ -63,10 +63,10 @@ export class PuppeteerManager {
     await delay(Math.random() * 2000);
     if (!this.browser) this.browser = await this.runBrowser();
     let page = null;
-    while (page === null && this.retries < 20) {
+    this.retries = 0;
+    while (this.retries < 20) {
       try {
         page = await this.createPage(this.browser, url, this.userAgent);
-
         return page;
       } catch (error) {
         console.log(
@@ -79,11 +79,11 @@ export class PuppeteerManager {
         page = null;
         this.userAgent = new randomUseragent();
         this.retries += 1;
+        await delay(Math.random() * 2000);
         // console.log("!switching user agent");
-      } finally {
       }
     }
-    console.log(`!!!failed all retries on page ${page}`);
+    console.log(`!!!failed all retries creating page on url: ${url}`);
     return null;
   }
 
@@ -250,8 +250,8 @@ export class PuppeteerManager {
         });
       });
     } catch (e) {
-      // console.log("! error seting up interceptors", e);
-      throw new Error("! error seting up interceptors", e);
+      console.log(e);
+      throw new Error("! error seting up interceptors");
     }
   }
 }
