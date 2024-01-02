@@ -72,7 +72,7 @@ export class PuppeteerManager {
         console.log(
           "!",
           this.retries,
-          " - failed creating page. Switchin userAgent and retrying.",
+          " - failed creating page. Switching userAgent and retrying.",
           error.message
         );
         this.error = false;
@@ -137,7 +137,7 @@ export class PuppeteerManager {
       waitUntil: "networkidle2",
       timeout: 0,
     });
-    if (this.error) throw new Error("interceptors error"); //need beter solution to catch errors from interceptor from page object
+    if (this.error) throw new Error("interceptor error:"); //need better solution to catch errors from interceptor from page object
 
     const mainFrame = page.mainFrame();
     if (!mainFrame) {
@@ -246,7 +246,7 @@ export class PuppeteerManager {
         });
       });
     } catch (e) {
-      console.log("! error seting up interceptors");
+      console.log("! error seting up interceptors", e);
     }
   }
 }
