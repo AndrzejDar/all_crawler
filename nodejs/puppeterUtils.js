@@ -246,7 +246,8 @@ export class PuppeteerManager {
         });
       });
     } catch (e) {
-      console.log("! error seting up interceptors", e);
+      // console.log("! error seting up interceptors", e);
+      throw new Error("! error seting up interceptors", e);
     }
   }
 }
