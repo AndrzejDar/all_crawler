@@ -1,32 +1,12 @@
-// const puppeteer = require("puppeteer-extra");
-// const randomUseragent = require("random-useragent");
-// const StealthPlugin = require("puppeteer-extra-plugin-stealth");
-
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import randomUseragent from "user-agents";
 import { executablePath } from "puppeteer";
-// import UserAgent from "user-agents";
-
-// const USER_AGENT =
-//   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.75 Safari/537.36";
-
-const browserOptions2 = {
-  executablePath: executablePath(),
-  headless: true,
-  args: [
-    "-wait-for-browser",
-    "--no-sandbox",
-    "--disable-dev-shm-usage",
-    "--disable-gpu",
-    '--js-flags="--noexpose_wasm"',
-  ],
-};
 
 const browserOptions = {
   executablePath: executablePath(),
-  headless: true,
-  // headless: "new", // causes some errors
+  // headless: true,
+  headless: "new", // causes some errors
   protocolTimeout: 60000,
   timeout: 30000,
   devtools: false,
@@ -70,9 +50,12 @@ export class PuppeteerManager {
   async release() {
     this.isReleased = true;
     try {
-      if (this.browser) await this.browser.close();
+      if (this.browser) {
+        console.log("!!!Browser is beeing released on schedule");
+        await this.browser.close();
+      }
     } catch (e) {
-      console.log(e);
+      console.log("!!!Browser crasched during release", e);
     }
   }
 
@@ -89,19 +72,18 @@ export class PuppeteerManager {
         console.log(
           "!",
           this.retries,
-          " - failed creating page, retrying.",
+          " - failed creating page. Switchin userAgent and retrying.",
           error.message
         );
         this.error = false;
         page = null;
         this.userAgent = new randomUseragent();
-        console.log("!switching user agent");
+        // console.log("!switching user agent");
       } finally {
         this.retries += 1;
       }
     }
-    console.log("!!!failed all retries or smth???");
-    console.log("page:", page);
+    console.log(`!!!failed all retries on page ${page}`);
     return null;
   }
 
@@ -134,12 +116,13 @@ export class PuppeteerManager {
       if (this.retries <= 10) {
         this.retries += 1;
         if (this.browser && this.browser.process() != null) {
+          console.log("!!!Closing/killing browser process");
           await this.browser.close();
           this.browser.process().kill("SIGINT");
         }
         await _this.init();
       } else {
-        throw "===================== BROWSER crashed more than 3 times";
+        throw "===================== BROWSER crashed more than 10 times";
       }
     });
 

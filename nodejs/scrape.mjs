@@ -49,6 +49,7 @@ const scrapeAllegroCategory = async (catId) => {
   await pm.release();
   return catItem;
 };
+
 const scrapeAllegroCategoryAll = async (allegro_cat_id, usedProduct = true) => {
   let pageCounter = 1;
   let savedProductListings = [];
