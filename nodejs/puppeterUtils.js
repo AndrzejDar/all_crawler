@@ -87,7 +87,7 @@ export class PuppeteerManager {
     return null;
   }
 
-  async retryLaunchBrowser(puppeter, retries) {
+  async retryLaunchBrowser(puppeteer, retries) {
     for (let i = 0; i < retries; i++) {
       let bw = null;
       try {
@@ -96,7 +96,7 @@ export class PuppeteerManager {
       } catch (e) {
         console.log("!!! Failed lunching browser", "try nr", i, e);
         console.log("!!! closing browser gracefully");
-        if (bw) await bw.close();
+        if (bw) await this.release();
         await delay(30000);
       } finally {
       }
@@ -138,7 +138,7 @@ export class PuppeteerManager {
       timeout: 0,
     });
     if (this.error) throw new Error("interceptors error"); //need beter solution to catch errors from interceptor from page object
-    // await page.waitForNavigation();
+
     const mainFrame = page.mainFrame();
     if (!mainFrame) {
       throw new Error("! navigation detached");
@@ -175,6 +175,8 @@ export class PuppeteerManager {
 
   async pageInterceptionSetup(page) {
     try {
+      //TO DO: disable all requests except first one
+
       await page.on("request", async (req) => {
         if (
           req.resourceType() == "stylesheet" ||
