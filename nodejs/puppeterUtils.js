@@ -78,9 +78,9 @@ export class PuppeteerManager {
         this.error = false;
         page = null;
         this.userAgent = new randomUseragent();
+        this.retries += 1;
         // console.log("!switching user agent");
       } finally {
-        this.retries += 1;
       }
     }
     console.log(`!!!failed all retries on page ${page}`);
@@ -132,7 +132,11 @@ export class PuppeteerManager {
   async createPage(browser, url) {
     const page = await browser.newPage();
     await this.pageSetup(page);
-    this.pageInterceptionSetup(page);
+    try {
+      this.pageInterceptionSetup(page);
+    } catch (e) {
+      throw new Error(e.message);
+    }
     await page.goto(url, {
       waitUntil: "networkidle2",
       timeout: 0,

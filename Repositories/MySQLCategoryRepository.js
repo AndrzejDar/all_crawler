@@ -89,7 +89,7 @@ const GetAllAllegroCategoriesToScrape = async () => {
 };
 
 const MarkCategoryScrapeDate = async (id) => {
-  console.log(`[-] Marking Categor scrape date`);
+  console.log(`[-] Marking category ${id} as scraped with current date`);
   const query = `UPDATE \`productCategories\` SET last_scrape= '${new Date()
     .toISOString()
     .slice(0, 10)}' WHERE id=${id}`;
