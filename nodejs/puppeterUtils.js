@@ -51,7 +51,7 @@ export class PuppeteerManager {
     this.isReleased = true;
     try {
       if (this.browser) {
-        console.log("!!!Browser is beeing released on schedule");
+        console.log(" -  releasing browser");
         await this.browser.close();
       }
     } catch (e) {
@@ -70,7 +70,7 @@ export class PuppeteerManager {
         return page;
       } catch (error) {
         console.log(
-          "!",
+          " ! ",
           this.retries,
           " - failed creating page. Switching userAgent and retrying.",
           error.message
@@ -79,7 +79,7 @@ export class PuppeteerManager {
         page = null;
         this.userAgent = new randomUseragent();
         this.retries += 1;
-        await delay(Math.random() * 2000);
+        await delay(Math.random() * 5000);
         // console.log("!switching user agent");
       }
     }
@@ -105,7 +105,7 @@ export class PuppeteerManager {
   }
 
   async runBrowser() {
-    console.log("!!!initializing new browser");
+    console.log(" -  initializing new browser");
     await delay(4000);
     puppeteer.use(StealthPlugin());
     const bw = await this.retryLaunchBrowser(puppeteer, 10);
@@ -120,7 +120,7 @@ export class PuppeteerManager {
           await this.browser.close();
           this.browser.process().kill("SIGINT");
         }
-        await _this.init();
+        await this.init();
       } else {
         throw "===================== BROWSER crashed more than 10 times";
       }
@@ -192,12 +192,30 @@ export class PuppeteerManager {
           }
           return;
         }
+        console.log("    page requested: ", req.url());
         try {
           if (req.url().includes("captcha-delivery.com")) {
             if (!req.isInterceptResolutionHandled()) {
-              // console.log("aborting");
               await req.abort();
               throw new Error("-----------Blocked by Datadome---------------"); //Reject when event hapens
+            }
+            return;
+          }
+          if (req.url().includes("skycaptcha")) {
+            if (!req.isInterceptResolutionHandled()) {
+              await req.abort();
+              throw new Error(
+                "-----------Blocked by Skycaptcha---------------"
+              ); //Reject when event hapens
+            }
+            return;
+          }
+          if (req.url().includes("allegro.pl/captcha")) {
+            if (!req.isInterceptResolutionHandled()) {
+              await req.abort();
+              throw new Error(
+                "-----------Blocked by Rate Limiter---------------"
+              ); //Reject when event hapens
             }
             return;
           }

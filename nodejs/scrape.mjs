@@ -138,6 +138,114 @@ const scrapeAllegroCategoryAll = async (allegro_cat_id, usedProduct = true) => {
   return { pagesFound: pages, savedProductListings: savedProductListings };
 };
 
+const scrapeAllegroCategoryAllv2 = async (
+  allegro_cat_id,
+  usedProduct = true
+) => {
+  let pages = 1;
+  let pageCounter = 1;
+  let savedProductListings = [];
+
+  const pm = new PuppeteerManager();
+
+  const cat_id = await SelectCategoryIdByAllegroId(allegro_cat_id);
+  if (!cat_id) {
+    throw new Error("Unknown allegro category - try adding it before");
+  }
+
+  while (pages > 0 && pageCounter <= pages) {
+    const page = await scrapePagev2(
+      allegro_cat_id,
+      `?order=p&offerTypeBuyNow=1&stan=${
+        usedProduct ? "używane" : "nowe"
+      }&p=${pageCounter}`,
+      pm
+    );
+    if (pages === 1) {
+      //get first page and set number of subsequent
+      if (!page) {
+        console.log("failed scraping first page");
+        return null;
+      }
+      pages = page.productsListDataJson.items.searchMeta.lastAvailablePage;
+    }
+    if (!page) {
+      console.log(
+        `failed scraping page ${pageCounter} for allegro_cat_id: ${allegro_cat_id}`
+      );
+      pageCounter++;
+    } else {
+      const productsList = page.productsList;
+
+      const productListingsArray = [];
+      productsList.forEach((p) => {
+        const productListing = new ProductListing(
+          p.title.text,
+          parseInt(p.price.normal.amount),
+          parseInt(p.id),
+          usedProduct ? "używane" : "nowe", //
+          cat_id,
+          p.url,
+          p.vendor === "allegro_lokalnie" ? true : false
+        ).toArray();
+        productListingsArray.push(productListing);
+      });
+
+      await AddProductListings(productListingsArray);
+      savedProductListings.push(...productListingsArray);
+      pageCounter++;
+    }
+  }
+  return { pagesFound: pages, savedProductListings: savedProductListings };
+};
+
+const scrapePagev2 = async (catId, query, pm) => {
+  let page = null;
+  try {
+    await pm.init();
+    page = await pm.createPageFromUrl(
+      `https://allegro.pl/kategoria/${catId}` + query
+    );
+  } catch (e) {
+    pm.release();
+    throw new Error("failed creating page from URL");
+    return;
+  }
+  if (page === null) {
+    console.log("page is empty in scrapePage");
+    pm.release();
+    return;
+  }
+
+  const productsListDataJson = await extractProudctsListJson(page);
+  if (productsListDataJson === null) {
+    console.log("Failed scraping page - no json data retrieved");
+    pm.release();
+    return;
+  }
+  const productsList = productsListDataJson.items.elements.filter((el) => {
+    return el.type != "label";
+  });
+  const productsInCatCount =
+    productsListDataJson.items.searchMeta.availableCount;
+  const catData =
+    productsListDataJson.items.categoryData[
+      productsListDataJson.items.categoryData.length - 1
+    ];
+  pm.release();
+  return {
+    bestPrice: new Price(
+      productsList[0].price.normal.amount,
+      0,
+      productsInCatCount,
+      productsList[0].id
+    ),
+    categoryData: catData,
+    productsList: productsList,
+    productsListDataJson: productsListDataJson,
+  };
+};
+
 const scrapePage = async (catId, query, pm) => {
   let page = null;
   try {
@@ -209,7 +317,10 @@ const extractProudctsListJson = async (page) => {
     })[0];
     return JSON.parse(productsJsonData.__listing_StoreState);
   } else {
-    console.log("no valid list of products in scraped data");
+    console.log(
+      "no valid list of products in scraped data (captcha? - check screenshot)"
+    );
+    await page.screenshot({ path: "image_noValidJson.png" });
     return null;
   }
 };
@@ -225,7 +336,7 @@ const scrapeAllAllegroCategories = async () => {
 
   for (let i = 0; i < categoriesArray.length; i++) {
     const category = categoriesArray[i];
-    const res = await scrapeAllegroCategoryAll(category.allegro_cat_id);
+    const res = await scrapeAllegroCategoryAllv2(category.allegro_cat_id);
     if (res?.savedProductListings && res?.savedProductListings?.length > 0) {
       console.log(
         `!!! scraped ${res?.savedProductListings?.length} products for categorry ${category.allegro_cat_id}`

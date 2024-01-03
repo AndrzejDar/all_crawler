@@ -77,9 +77,8 @@ const AddProductListings = async (data) => {
 };
 
 const GetAllAllegroCategoriesToScrape = async () => {
-  console.log(`[-] Getting all allegor categories to scrape`);
+  console.log(`[-] Getting all allegro categories to scrape`);
   const upToDate = new Date().toISOString().slice(0, 10);
-  console.log(upToDate);
   const query = `
   SELECT allegro_cat_id, id 
   FROM \`productCategories\` 
