@@ -185,7 +185,8 @@ export class PuppeteerManager {
         if (
           req.resourceType() == "stylesheet" ||
           req.resourceType() == "font" ||
-          req.resourceType() == "image"
+          req.resourceType() == "image" ||
+          req.url.includes("assets.allegrostatic.com")
         ) {
           if (!req.isInterceptResolutionHandled()) {
             await req.abort();
