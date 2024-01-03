@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import items from "./routes/api/items.js";
 import scheduleOperation from "./nodejs/scheduleOperations.js";
 import scheduleOperations from "./nodejs/scheduleOperations.js";
+import { scrapeAllAllegroCategories } from "./nodejs/scrape.mjs";
 
 dotenv.config();
 
@@ -26,5 +27,8 @@ if (!process.env.PORT) console.log("[-] missing env variables");
 const port = process.env.PORT || 5000; //variable from host or 5000
 
 scheduleOperations();
+
+//start scraping on startup
+scrapeAllAllegroCategories();
 
 app.listen(port, () => console.log(`server started on port: ${port}`));
