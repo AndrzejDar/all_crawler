@@ -185,15 +185,15 @@ export class PuppeteerManager {
         if (
           req.resourceType() == "stylesheet" ||
           req.resourceType() == "font" ||
-          req.resourceType() == "image" ||
-          req.url.includes("assets.allegrostatic.com")
+          req.resourceType() == "image"
+          // req.url().includes("assets.allegrostatic.com")
         ) {
           if (!req.isInterceptResolutionHandled()) {
             await req.abort();
           }
           return;
         }
-        console.log("    page requested: ", req.url());
+        // console.log("    page requested: ", req.url());
         try {
           if (req.url().includes("captcha-delivery.com")) {
             if (!req.isInterceptResolutionHandled()) {
