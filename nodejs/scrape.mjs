@@ -264,6 +264,7 @@ const scrapePage = async (catId, query, pm) => {
   if (!page.isClosed()) {
     await page.screenshot({ path: "image.png" });
   }
+
   const productsListDataJson = await extractProudctsListJson(page);
   // console.log(productsListDataJson);
   if (productsListDataJson === null) {
@@ -296,7 +297,9 @@ const scrapePage = async (catId, query, pm) => {
 };
 
 const extractProudctsListJson = async (page) => {
+  await page.screenshot({ path: "image_beforeExtraction.png" });
   const jsonsData = await page.evaluate(() => {
+    // console.log(document);
     const scriptElements = document.querySelectorAll(
       'script[type="application/json"]'
     );
@@ -315,7 +318,10 @@ const extractProudctsListJson = async (page) => {
         el.__listing_StoreState
       );
     })[0];
-    return JSON.parse(productsJsonData.__listing_StoreState);
+    // console.log(productsJsonData);
+    // const filePath = "./scrapedProducJsonData.json";
+    // fs.writeFileSync(filePath, JSON.stringify(JSON.parse(productsJsonData)));
+    return productsJsonData.__listing_StoreState;
   } else {
     console.log(
       "no valid list of products in scraped data (captcha? - check screenshot)"
